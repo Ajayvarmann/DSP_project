@@ -1,6 +1,7 @@
 # DSP_project
 Project on following topics
 1. Encoding and Decoding Touch-tone (DTMF) signals
+   
 (a)Simple Bandpass Filter Design
 
 (b)A Scoring Function
