@@ -41,6 +41,25 @@ A scoring process that evaluates the BPF outputs and identifies the DTMF frequen
 ### Simple Bandpass Filter Design
 The objective of this problem is to design a filter bank using bandpass filters (BPFs) for Dual-Tone Multi-Frequency (DTMF) signal detection. The DTMF system is used for detecting keypresses on a telephone keypad. Each keypress generates two tones: one from a low-frequency group and one from a high-frequency group. The goal is to isolate and detect these tones using a set of bandpass filters, each centered around a specific DTMF frequency.
 
+<div style="display: flex; justify-content: space-between;">
+  <img src="https://github.com/Ajayvarmann/DSP_project/blob/main/Images/LabP13_Exercise4_1_02.png?raw=true" width="400">
+  <img src="https://github.com/Ajayvarmann/DSP_project/blob/main/Images/LabP13_Exercise4_1_03.png?raw=true" width="400">
+</div>
+
 ### A Scoring Function
 This problem focuses on the DTMF (Dual-tone multi-frequency) decoding process, where the goal is to determine the presence or absence of individual tones in a DTMF signal using a scoring function. The function evaluates each tone segment and makes a binary decision (1 or 0) based on the filtered signal. 
 Key Objectives is implement the dtmfscore function: This function will filter a short segment of the DTMF signal and score it based on the maximum amplitude of the filtered output.
+
+<div style="display: flex; justify-content: space-between;">
+  <img src="https://github.com/Ajayvarmann/DSP_project/blob/main/Images/LabP13_Exercise4_2_01.png?raw=true" width="200">
+  <img src="https://github.com/Ajayvarmann/DSP_project/blob/main/Images/LabP13_Exercise4_2_02.png?raw=true" width="200">
+  <img src="https://github.com/Ajayvarmann/DSP_project/blob/main/Images/LabP13_Exercise4_2_03.png?raw=true" width="200">
+  <img src="https://github.com/Ajayvarmann/DSP_project/blob/main/Images/LabP13_Exercise4_2_04.png?raw=true" width="200">
+</div>
+<div style="display: flex; justify-content: space-between;">
+  <img src="https://github.com/Ajayvarmann/DSP_project/blob/main/Images/LabP13_Exercise4_2_05.png?raw=true" width="200">
+  <img src="https://github.com/Ajayvarmann/DSP_project/blob/main/Images/LabP13_Exercise4_2_06.png?raw=true" width="200">
+  <img src="https://github.com/Ajayvarmann/DSP_project/blob/main/Images/LabP13_Exercise4_2_07.png?raw=true" width="200">
+  <img src="https://github.com/Ajayvarmann/DSP_project/blob/main/Images/LabP13_Exercise4_2_08.png?raw=true" width="200">
+</div>
+<img src="https://github.com/Ajayvarmann/DSP_project/blob/main/Images/LabP13_Exercise4_2_09.png?raw=true" width="400">
