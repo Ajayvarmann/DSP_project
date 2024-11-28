@@ -1,36 +1,31 @@
-%% Test Script for dtmfrun.m
+% Test script for dtmfrun
 
-% Define the sampling frequency
-fs = 8000;
+% Sampling frequency
+fs = 8000; % Use this sampling rate in all functions
 
-% Define the keys to encode and decode
-keys = ['4', '0', '7', '*', '8', '9', '1', '3', '2', '#', 'B', 'A', 'D', 'C'];
+% Define the sequence of DTMF keys
+tk = ['A', 'B', 'C', 'D', '*', '#', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
 
-% Generate the DTMF signal using dtmfdial (ensure dtmfdial.m is implemented)
-dtmf_signal = dtmfdial(keys, fs);
+% Generate a DTMF signal for the test sequence using dtmfdial
+% Assuming dtmfdial is available or you have the signal pre-generated
+xx = dtmfdial(tk, fs); % Replace this with your signal if pre-generated
 
-% Specify the filter length (based on design, e.g., L = 80)
-L = 80;
+% Define the filter length
+L = 80; % Adjust this value as required by your implementation
 
-% Decode the DTMF signal using dtmfrun
-decoded_keys = dtmfrun(dtmf_signal, L, fs);
+% Test the dtmfrun function
+disp('Testing dtmfrun...');
+decoded_keys = dtmfrun(xx, L, fs);
 
-% Display the original and decoded keys
-disp('Original keys:');
-disp(keys);
+% Display the decoded keys
 disp('Decoded keys:');
 disp(decoded_keys);
 
-% Verify if the decoding matches the original keys
-if isequal(keys, decoded_keys)
-    disp('Decoding successful: Keys match!');
+% Verify if the decoded keys match the original sequence
+if isequal(decoded_keys, tk)
+    disp('Test Passed: Decoded keys match the input sequence.');
 else
-    disp('Decoding failed: Keys do not match.');
+    disp('Test Failed: Decoded keys do not match the input sequence.');
+    fprintf('Expected: %s\n', tk);
+    fprintf('Decoded:  %s\n', decoded_keys);
 end
-
-% Plot a single spectrogram for visualization
-figure;
-spectrogram(dtmf_signal, 256, [], [], fs, 'yaxis');
-title('Spectrogram of the DTMF Signal');
-xlabel('Time (s)');
-ylabel('Frequency (Hz)');
