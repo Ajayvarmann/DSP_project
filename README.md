@@ -6,9 +6,9 @@
 
    [Move to A Scoring Function](#A-Scoring-Function)
 
-   (c) DTMF Decode Function
+   [Move to DTMF Decode Function](#DTMF-Decode-Function)
 
-   (d)Telephone Numbers
+   [Move to Telephone Numbers](#Telephone-Numbers)
 
 3. FIR Filter Design GUI
 
@@ -63,3 +63,9 @@ Key Objectives is implement the dtmfscore function: This function will filter a 
   <img src="https://github.com/Ajayvarmann/DSP_project/blob/main/Images/LabP13_Exercise4_2_08.png?raw=true" width="200">
 </div>
 <img src="https://github.com/Ajayvarmann/DSP_project/blob/main/Images/LabP13_Exercise4_2_09.png?raw=true" width="400">
+
+### DTMF Decode Function
+<img src="https://github.com/Ajayvarmann/DSP_project/blob/main/Images/LabP13_Exercise4_3_01.png?raw=true" width="400">
+
+### Telephone Numbers
+<img src="https://github.com/Ajayvarmann/DSP_project/blob/main/Images/LabP13_Exercise4_4_01.png?raw=true" width="400">
