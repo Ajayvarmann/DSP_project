@@ -2,9 +2,9 @@
 
 1. Encoding and Decoding Touch-tone (DTMF) signals
    
-   #(a)Simple Bandpass Filter Design
+   # (a)Simple Bandpass Filter Design
 
-   #(b)A Scoring Function
+   # (b)A Scoring Function
 
    (c) DTMF Decode Function
 
