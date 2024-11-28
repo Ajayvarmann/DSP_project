@@ -1,13 +1,13 @@
-% Test Script for dtmfdial.m
+%% Test Script for dtmfdial.m
 
 % Define the sampling frequency
 fs = 8000;
 
 % Define a set of keys to test
-keys = ['1', '2', '3', 'A', '4', '5', '6', 'B', '7', '8', '9', 'C', '*', '0', '#', 'D'];
+tk = ['4', '0', '7', '*', '8', '9', '1', '3', '2', '#', 'B', 'A', 'D', 'C'];
 
 % Generate the DTMF signal using dtmfdial
-dtmf_signal = dtmfdial(keys, fs);
+dtmf_signal = dtmfdial(tk, fs);
 
 % Play the generated signal
 disp('Playing the generated DTMF signal...');
