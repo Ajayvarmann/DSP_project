@@ -1,4 +1,4 @@
-%% Test Script for dtmfdial.m
+% Test Script for dtmfdial.m
 
 % Define the sampling frequency
 fs = 8000;
