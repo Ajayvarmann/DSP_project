@@ -49,6 +49,9 @@ The objective of this problem is to design a filter bank using bandpass filters 
 ### A Scoring Function
 This problem focuses on the DTMF (Dual-tone multi-frequency) decoding process, where the goal is to determine the presence or absence of individual tones in a DTMF signal using a scoring function. The function evaluates each tone segment and makes a binary decision (1 or 0) based on the filtered signal. 
 Key Objectives is implement the dtmfscore function: This function will filter a short segment of the DTMF signal and score it based on the maximum amplitude of the filtered output.
+For each of the eight bandpass filters, choose 𝐿 such that only one DTMF frequency lies within the passband, and all other frequencies lie in the stopband.
+Use the frequency response plots to demonstrate whether each filter meets these specifications.
+
 
 <div style="display: flex; justify-content: space-between;">
   <img src="https://github.com/Ajayvarmann/DSP_project/blob/main/Images/LabP13_Exercise4_2_01.png?raw=true" width="200">
