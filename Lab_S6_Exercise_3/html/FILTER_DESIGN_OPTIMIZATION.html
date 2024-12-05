@@ -1,0 +1,945 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      -->
+<title>FILTER_DESIGN_OPTIMIZATION</title>
+<meta name="generator" content="MATLAB 24.2">
+<link rel="schema.DC" href="http://purl.org/dc/elements/1.1/">
+<meta name="DC.date" content="2024-12-04">
+<meta name="DC.source" content="FILTER_DESIGN_OPTIMIZATION.m">
+<style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; }
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+span.typesection { color:#A0522D }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style>
+</head>
+<body>
+<div class="content">
+<h2>Contents</h2>
+<div>
+<ul>
+<li>
+<a href="#1">FIR Filter Design via Optimization</a>
+</li>
+<li>
+<a href="#2">(a): Estimate Filter Order</a>
+</li>
+<li>
+<a href="#3">(b): Plot Impulse Response</a>
+</li>
+<li>
+<a href="#4">Part (c): Frequency Response and Ripple Verification</a>
+</li>
+<li>
+<a href="#5">Part (d): Redesigning the FIR Filter (iterative-1)</a>
+</li>
+<li>
+<a href="#6">Further Increasing Filter Order</a>
+</li>
+<li>
+<a href="#7">(e) Final FIR Filter Design</a>
+</li>
+</ul>
+</div>
+<h2 id="1">FIR Filter Design via Optimization</h2>
+<pre class="codeinput">
+<span class="comment">% Given Specifications</span>
+omega_p = 0.68 * pi; <span class="comment">% Passband edge (normalized frequency)</span>
+omega_s = 0.72 * pi; <span class="comment">% Stopband edge (normalized frequency)</span>
+delta_p = 0.05; <span class="comment">% Passband ripple</span>
+delta_s = 0.01; <span class="comment">% Stopband ripple</span>
+fs = 2; <span class="comment">% Sampling frequency (normalized to Nyquist)</span>
+</pre>
+<h2 id="2">(a): Estimate Filter Order</h2>
+<pre class="codeinput">f_p = omega_p / (2 * pi) * fs; <span class="comment">% Passband edge in Hz</span>
+f_s = omega_s / (2 * pi) * fs; <span class="comment">% Stopband edge in Hz</span>
+
+<span class="comment">% Use firpmord to determine filter order and specifications</span>
+[n, fo, ao, w] = firpmord([f_p, f_s], [1, 0], [delta_p, delta_s], fs);
+
+
+<span class="comment">% Display weights</span>
+fprintf(<span class="string">'Passband Weight: %.2f\n'</span>, w(1));
+fprintf(<span class="string">'Stopband Weight: %.2f\n'</span>, w(2));
+<span class="comment">% Display estimated filter order</span>
+fprintf(<span class="string">'Estimated Filter Order: %d\n'</span>, n);
+fprintf(<span class="string">'Band Edges (Normalized): [%.4f, %.4f]\n'</span>, fo);
+fprintf(<span class="string">'Desired Amplitudes: [%.4f, %.4f]\n'</span>, ao);
+fprintf(<span class="string">'Weights: [%.4f, %.4f]\n'</span>, w);
+
+<span class="comment">%  Compute Filter Coefficients</span>
+b = firpm(n, fo, ao, w); <span class="comment">% FIR filter coefficients</span>
+
+<span class="comment">% Display filter coefficients</span>
+fprintf(<span class="string">'Filter Coefficients:\n'</span>);
+disp(b);
+
+<span class="comment">% Plot Impulse Response</span>
+figure;
+stem(b, <span class="string">'filled'</span>);
+title(<span class="string">'Impulse Response of the FIR Filter'</span>);
+xlabel(<span class="string">'n'</span>);
+ylabel(<span class="string">'h[n]'</span>);
+grid <span class="string">on</span>;
+
+<span class="comment">% Plot Frequency Response</span>
+[H, freq] = freqz(b, 1, 1024, fs);
+figure;
+plot(freq, abs(H), <span class="string">'LineWidth'</span>, 1.5);
+title(<span class="string">'Frequency Response of the FIR Filter'</span>);
+xlabel(<span class="string">'Frequency (Hz)'</span>);
+ylabel(<span class="string">'|H(f)|'</span>);
+grid <span class="string">on</span>;
+</pre>
+<pre class="codeoutput">Passband Weight: 1.00
+Stopband Weight: 5.00
+Estimated Filter Order: 73
+Band Edges (Normalized): [0.0000, 0.6800]
+Band Edges (Normalized): [0.7200, 1.0000]
+Desired Amplitudes: [1.0000, 1.0000]
+Desired Amplitudes: [0.0000, 0.0000]
+Weights: [1.0000, 5.0000]
+Filter Coefficients:
+  Columns 1 through 7
+
+    0.0069    0.0216    0.0024   -0.0078    0.0057   -0.0002   -0.0053
+
+  Columns 8 through 14
+
+    0.0068   -0.0028   -0.0040    0.0082   -0.0057   -0.0022    0.0093
+
+  Columns 15 through 21
+
+   -0.0090    0.0006    0.0097   -0.0127    0.0047    0.0089   -0.0166
+
+  Columns 22 through 28
+
+    0.0105    0.0064   -0.0205    0.0184    0.0012   -0.0240    0.0296
+
+  Columns 29 through 35
+
+   -0.0085   -0.0270    0.0477   -0.0284   -0.0291    0.0887   -0.0918
+
+  Columns 36 through 42
+
+   -0.0302    0.5658    0.5658   -0.0302   -0.0918    0.0887   -0.0291
+
+  Columns 43 through 49
+
+   -0.0284    0.0477   -0.0270   -0.0085    0.0296   -0.0240    0.0012
+
+  Columns 50 through 56
+
+    0.0184   -0.0205    0.0064    0.0105   -0.0166    0.0089    0.0047
+
+  Columns 57 through 63
+
+   -0.0127    0.0097    0.0006   -0.0090    0.0093   -0.0022   -0.0057
+
+  Columns 64 through 70
+
+    0.0082   -0.0040   -0.0028    0.0068   -0.0053   -0.0002    0.0057
+
+  Columns 71 through 74
+
+   -0.0078    0.0024    0.0216    0.0069
+
+</pre>
+<img vspace="5" hspace="5" src="FILTER_DESIGN_OPTIMIZATION_01.png" alt=""> <img vspace="5" hspace="5" src="FILTER_DESIGN_OPTIMIZATION_02.png" alt=""> <h2 id="3">(b): Plot Impulse Response</h2>
+<p>The filter coefficients calculated earlier represent the impulse response h[n]. Plotting the impulse response provides insights into the time-domain behavior of the filter.</p>
+<pre class="codeinput">figure;
+stem(b, <span class="string">'filled'</span>); <span class="comment">% Impulse response is the filter coefficients</span>
+title(<span class="string">'Impulse Response of the FIR Filter'</span>);
+xlabel(<span class="string">'n (Sample Index)'</span>);
+ylabel(<span class="string">'h[n] (Filter Coefficients)'</span>);
+grid <span class="string">on</span>;
+</pre>
+<img vspace="5" hspace="5" src="FILTER_DESIGN_OPTIMIZATION_03.png" alt=""> <h2 id="4">Part (c): Frequency Response and Ripple Verification</h2>
+<p>Compute the frequency response of the FIR filter</p>
+<pre class="codeinput">[H, freq] = freqz(b, 1, 1024, fs); <span class="comment">% H(e^jω): Frequency response, freq: Frequency axis</span>
+
+<span class="comment">% Plot the magnitude response</span>
+figure;
+plot(freq, abs(H), <span class="string">'LineWidth'</span>, 1.5);
+title(<span class="string">'Magnitude Response of the FIR Filter'</span>);
+xlabel(<span class="string">'Frequency (Hz)'</span>);
+ylabel(<span class="string">'|H(f)|'</span>);
+grid <span class="string">on</span>;
+
+<span class="comment">% Define passband and stopband regions</span>
+passband_idx = (freq &lt;= f_p); <span class="comment">% Logical indexing for passband region</span>
+stopband_idx = (freq &gt;= f_s); <span class="comment">% Logical indexing for stopband region</span>
+
+<span class="comment">% Compute ripples</span>
+passband_ripple = max(abs(H(passband_idx))) - min(abs(H(passband_idx))); <span class="comment">% Ripple in passband</span>
+stopband_ripple = max(abs(H(stopband_idx))); <span class="comment">% Ripple in stopband</span>
+
+<span class="comment">% Display ripple specs</span>
+fprintf(<span class="string">'Passband Ripple (Max-Min): %.4f (Expected: %.4f)\n'</span>, passband_ripple, delta_p);
+fprintf(<span class="string">'Stopband Ripple (Max): %.4f (Expected: %.4f)\n'</span>, stopband_ripple, delta_s);
+
+<span class="comment">% Check if specifications are met</span>
+<span class="keyword">if</span> passband_ripple &lt;= delta_p
+    fprintf(<span class="string">'Passband ripple meets the specification.\n'</span>);
+<span class="keyword">else</span>
+    fprintf(<span class="string">'Passband ripple does NOT meet the specification.\n'</span>);
+<span class="keyword">end</span>
+
+<span class="keyword">if</span> stopband_ripple &lt;= delta_s
+    fprintf(<span class="string">'Stopband ripple meets the specification.\n'</span>);
+<span class="keyword">else</span>
+    fprintf(<span class="string">'Stopband ripple does NOT meet the specification.\n'</span>);
+<span class="keyword">end</span>
+
+<span class="comment">% Zoomed plots for better verification</span>
+<span class="comment">% Zoomed Passband Ripple</span>
+figure;
+plot(freq(passband_idx), abs(H(passband_idx)), <span class="string">'LineWidth'</span>, 1.5);
+title(<span class="string">'Zoomed Passband Ripple'</span>);
+xlabel(<span class="string">'Frequency (Hz)'</span>);
+ylabel(<span class="string">'|H(f)|'</span>);
+grid <span class="string">on</span>;
+
+<span class="comment">% Zoomed Stopband Ripple</span>
+figure;
+plot(freq(stopband_idx), abs(H(stopband_idx)), <span class="string">'LineWidth'</span>, 1.5);
+title(<span class="string">'Zoomed Stopband Ripple'</span>);
+xlabel(<span class="string">'Frequency (Hz)'</span>);
+ylabel(<span class="string">'|H(f)|'</span>);
+grid <span class="string">on</span>;
+</pre>
+<pre class="codeoutput">Passband Ripple (Max-Min): 0.1087 (Expected: 0.0500)
+Stopband Ripple (Max): 0.0109 (Expected: 0.0100)
+Passband ripple does NOT meet the specification.
+Stopband ripple does NOT meet the specification.
+</pre>
+<img vspace="5" hspace="5" src="FILTER_DESIGN_OPTIMIZATION_04.png" alt=""> <img vspace="5" hspace="5" src="FILTER_DESIGN_OPTIMIZATION_05.png" alt=""> <img vspace="5" hspace="5" src="FILTER_DESIGN_OPTIMIZATION_06.png" alt=""> <h2 id="5">Part (d): Redesigning the FIR Filter (iterative-1)</h2>
+<pre class="codeinput">
+<span class="comment">% Increment the filter order</span>
+n_new = n + 1; <span class="comment">% Increase the filter order by 1</span>
+fprintf(<span class="string">'Increased Filter Order: %d\n'</span>, n_new);
+
+<span class="comment">% Redesign the filter with the new order</span>
+b_new = firpm(n_new, fo, ao, w); <span class="comment">% Recompute filter coefficients</span>
+
+<span class="comment">% Frequency Response of Redesigned Filter</span>
+<span class="comment">% Compute the frequency response of the redesigned FIR filter.</span>
+
+[H_new, freq_new] = freqz(b_new, 1, 1024, fs); <span class="comment">% Frequency response</span>
+figure;
+plot(freq_new, abs(H_new), <span class="string">'LineWidth'</span>, 1.5);
+title(<span class="string">'Magnitude Response of Redesigned FIR Filter'</span>);
+xlabel(<span class="string">'Frequency (Hz)'</span>);
+ylabel(<span class="string">'|H(f)|'</span>);
+grid <span class="string">on</span>;
+
+<span class="comment">% Verifying Ripple Specifications</span>
+<span class="comment">% The redesigned filter's passband and stopband ripples are calculated and compared</span>
+<span class="comment">% with the given specifications.</span>
+
+<span class="comment">% Passband and stopband indices</span>
+passband_idx_new = (freq_new &lt;= f_p); <span class="comment">% Passband region</span>
+stopband_idx_new = (freq_new &gt;= f_s); <span class="comment">% Stopband region</span>
+
+<span class="comment">% Calculate passband ripple</span>
+passband_ripple_new = max(abs(H_new(passband_idx_new))) - min(abs(H_new(passband_idx_new)));
+
+<span class="comment">% Calculate stopband ripple</span>
+stopband_ripple_new = max(abs(H_new(stopband_idx_new)));
+
+<span class="comment">% Display the ripple values</span>
+fprintf(<span class="string">'New Passband Ripple: %.4f (Expected: %.4f)\n'</span>, passband_ripple_new, delta_p);
+fprintf(<span class="string">'New Stopband Ripple: %.4f (Expected: %.4f)\n'</span>, stopband_ripple_new, delta_s);
+
+<span class="comment">% Check if the ripple specifications are satisfied</span>
+<span class="keyword">if</span> passband_ripple_new &lt;= delta_p
+    fprintf(<span class="string">'Passband ripple meets the specification.\n'</span>);
+<span class="keyword">else</span>
+    fprintf(<span class="string">'Passband ripple does NOT meet the specification.\n'</span>);
+<span class="keyword">end</span>
+
+<span class="keyword">if</span> stopband_ripple_new &lt;= delta_s
+    fprintf(<span class="string">'Stopband ripple meets the specification.\n'</span>);
+<span class="keyword">else</span>
+    fprintf(<span class="string">'Stopband ripple does NOT meet the specification.\n'</span>);
+<span class="keyword">end</span>
+
+<span class="comment">% Impulse Response of Redesigned Filter</span>
+<span class="comment">% The impulse response of the redesigned filter (i.e., its filter coefficients)</span>
+<span class="comment">% is visualized to observe the time-domain behavior of the filter.</span>
+
+figure;
+stem(b_new, <span class="string">'filled'</span>);
+title(<span class="string">'Impulse Response of Redesigned FIR Filter'</span>);
+xlabel(<span class="string">'n (Sample Index)'</span>);
+ylabel(<span class="string">'h[n]'</span>);
+grid <span class="string">on</span>;
+</pre>
+<pre class="codeoutput">Increased Filter Order: 74
+New Passband Ripple: 0.1003 (Expected: 0.0500)
+New Stopband Ripple: 0.0101 (Expected: 0.0100)
+Passband ripple does NOT meet the specification.
+Stopband ripple does NOT meet the specification.
+</pre>
+<img vspace="5" hspace="5" src="FILTER_DESIGN_OPTIMIZATION_07.png" alt=""> <img vspace="5" hspace="5" src="FILTER_DESIGN_OPTIMIZATION_08.png" alt=""> <h2 id="6">Further Increasing Filter Order</h2>
+<p>Since the redesigned filter still did not meet the specifications, we further increase the filter order by 2. Increase the weight on the passband</p>
+<pre class="codeinput">w_p_adjusted = 1.5 * (1 / delta_p); <span class="comment">% Increase passband weight by 50%</span>
+w_s = 1 / delta_s; <span class="comment">% Keep stopband weight the same</span>
+w_adjusted = [w_p_adjusted, w_s]; <span class="comment">% New weights</span>
+
+n_newer = n_new + 14; <span class="comment">% Increase the filter order by 2</span>
+fprintf(<span class="string">'Further Increased Filter Order: %d\n'</span>, n_newer);
+
+<span class="comment">% Redesign the filter with the new order</span>
+b_newer = firpm(n_newer, fo, ao, w_adjusted); <span class="comment">% Recompute filter coefficients</span>
+
+<span class="comment">% Compute the frequency response of the new filter</span>
+[H_newer, freq_newer] = freqz(b_newer, 1, 1024, fs);
+
+<span class="comment">%Frequency Response of the Further Redesigned Filter</span>
+<span class="comment">% Plot the magnitude response to visualize improvements.</span>
+figure;
+plot(freq_newer, abs(H_newer), <span class="string">'LineWidth'</span>, 1.5);
+title(<span class="string">'Magnitude Response of Further Redesigned FIR Filter'</span>);
+xlabel(<span class="string">'Frequency (Hz)'</span>);
+ylabel(<span class="string">'|H(f)|'</span>);
+grid <span class="string">on</span>;
+
+<span class="comment">% Verifying Ripple Specifications</span>
+<span class="comment">% Calculate passband and stopband ripples for the further redesigned filter.</span>
+
+<span class="comment">% Passband and stopband indices</span>
+passband_idx_newer = (freq_newer &lt;= f_p); <span class="comment">% Logical indices for passband</span>
+stopband_idx_newer = (freq_newer &gt;= f_s); <span class="comment">% Logical indices for stopband</span>
+
+<span class="comment">% Compute ripples</span>
+passband_ripple_newer = max(abs(H_newer(passband_idx_newer))) - min(abs(H_newer(passband_idx_newer)));
+stopband_ripple_newer = max(abs(H_newer(stopband_idx_newer)));
+
+<span class="comment">% Display the ripple values</span>
+fprintf(<span class="string">'New Passband Ripple: %.4f (Expected: %.4f)\n'</span>, passband_ripple_newer, delta_p);
+fprintf(<span class="string">'New Stopband Ripple: %.4f (Expected: %.4f)\n'</span>, stopband_ripple_newer, delta_s);
+
+<span class="comment">% Check if the ripple specifications are met</span>
+<span class="keyword">if</span> passband_ripple_newer &lt;= delta_p
+    fprintf(<span class="string">'Passband ripple meets the specification after further redesign.\n'</span>);
+<span class="keyword">else</span>
+    fprintf(<span class="string">'Passband ripple does NOT meet the specification after further redesign.\n'</span>);
+<span class="keyword">end</span>
+
+<span class="keyword">if</span> stopband_ripple_newer &lt;= delta_s
+    fprintf(<span class="string">'Stopband ripple meets the specification after further redesign.\n'</span>);
+<span class="keyword">else</span>
+    fprintf(<span class="string">'Stopband ripple does NOT meet the specification after further redesign.\n'</span>);
+<span class="keyword">end</span>
+
+<span class="comment">% Impulse Response of Further Redesigned Filter</span>
+<span class="comment">% Plot the impulse response to observe the changes in the time domain.</span>
+figure;
+stem(b_newer, <span class="string">'filled'</span>);
+title(<span class="string">'Impulse Response of Further Redesigned FIR Filter'</span>);
+xlabel(<span class="string">'n (Sample Index)'</span>);
+ylabel(<span class="string">'h[n]'</span>);
+grid <span class="string">on</span>;
+</pre>
+<pre class="codeoutput">Further Increased Filter Order: 88
+New Passband Ripple: 0.0497 (Expected: 0.0500)
+New Stopband Ripple: 0.0075 (Expected: 0.0100)
+Passband ripple meets the specification after further redesign.
+Stopband ripple meets the specification after further redesign.
+</pre>
+<img vspace="5" hspace="5" src="FILTER_DESIGN_OPTIMIZATION_09.png" alt=""> <img vspace="5" hspace="5" src="FILTER_DESIGN_OPTIMIZATION_10.png" alt=""> <h2 id="7">(e) Final FIR Filter Design</h2>
+<pre class="codeinput">
+<span class="comment">% Final Filter Design</span>
+n_final = n_newer; <span class="comment">% Use the last adjusted filter order</span>
+fprintf(<span class="string">'Final Filter Order: %d\n'</span>, n_final);
+
+<span class="comment">% Redesign the FIR filter</span>
+b_final = firpm(n_final, fo, ao, w_adjusted); <span class="comment">% Filter coefficients</span>
+
+<span class="comment">% Compute the frequency response</span>
+[H_final, freq_final] = freqz(b_final, 1, 1024, fs);
+
+<span class="comment">% Plot Magnitude Response</span>
+figure;
+plot(freq_final, abs(H_final), <span class="string">'LineWidth'</span>, 1.5);
+title(<span class="string">'Final Magnitude Response of FIR Filter'</span>);
+xlabel(<span class="string">'Frequency (Hz)'</span>);
+ylabel(<span class="string">'|H(f)|'</span>);
+grid <span class="string">on</span>;
+
+<span class="comment">% Highlight passband and stopband limits</span>
+hold <span class="string">on</span>;
+yline(1 + delta_p, <span class="string">'--r'</span>, <span class="string">'Passband Upper Limit'</span>); <span class="comment">% Passband upper tolerance</span>
+yline(1 - delta_p, <span class="string">'--r'</span>, <span class="string">'Passband Lower Limit'</span>); <span class="comment">% Passband lower tolerance</span>
+yline(delta_s, <span class="string">'--b'</span>, <span class="string">'Stopband Upper Limit'</span>); <span class="comment">% Stopband tolerance</span>
+hold <span class="string">off</span>;
+
+<span class="comment">% Zoomed-In Passband Response</span>
+figure;
+plot(freq_final, abs(H_final), <span class="string">'LineWidth'</span>, 1.5);
+xlim([0, f_p + 0.1 * (f_s - f_p)]); <span class="comment">% Adjust range for zoom</span>
+ylim([1 - delta_p - 0.01, 1 + delta_p + 0.01]); <span class="comment">% Adjust vertical limits for passband ripple</span>
+title(<span class="string">'Zoomed-In Passband Response'</span>);
+xlabel(<span class="string">'Frequency (Hz)'</span>);
+ylabel(<span class="string">'|H(f)|'</span>);
+grid <span class="string">on</span>;
+hold <span class="string">on</span>;
+yline(1 + delta_p, <span class="string">'--r'</span>, <span class="string">'Passband Upper Limit'</span>); <span class="comment">% Passband upper tolerance</span>
+yline(1 - delta_p, <span class="string">'--r'</span>, <span class="string">'Passband Lower Limit'</span>); <span class="comment">% Passband lower tolerance</span>
+hold <span class="string">off</span>;
+
+<span class="comment">% Zoomed-In Stopband Response</span>
+figure;
+plot(freq_final, abs(H_final), <span class="string">'LineWidth'</span>, 1.5);
+xlim([f_s - 0.1 * (f_s - f_p), fs/2]); <span class="comment">% Adjust range for zoom</span>
+ylim([0, delta_s + 0.01]); <span class="comment">% Adjust vertical limits for stopband ripple</span>
+title(<span class="string">'Zoomed-In Stopband Response'</span>);
+xlabel(<span class="string">'Frequency (Hz)'</span>);
+ylabel(<span class="string">'|H(f)|'</span>);
+grid <span class="string">on</span>;
+hold <span class="string">on</span>;
+yline(delta_s, <span class="string">'--b'</span>, <span class="string">'Stopband Tolerance'</span>); <span class="comment">% Stopband tolerance</span>
+hold <span class="string">off</span>;
+
+<span class="comment">% Ripple Verification</span>
+<span class="comment">% Passband and stopband indices</span>
+passband_idx_final = (freq_final &lt;= f_p); <span class="comment">% Passband region</span>
+stopband_idx_final = (freq_final &gt;= f_s); <span class="comment">% Stopband region</span>
+
+<span class="comment">% Compute ripples</span>
+passband_ripple_final = max(abs(H_final(passband_idx_final))) - min(abs(H_final(passband_idx_final)));
+stopband_ripple_final = max(abs(H_final(stopband_idx_final)));
+
+<span class="comment">% Display final ripple values</span>
+fprintf(<span class="string">'Final Passband Ripple: %.4f (Expected: %.4f)\n'</span>, passband_ripple_final, delta_p);
+fprintf(<span class="string">'Final Stopband Ripple: %.4f (Expected: %.4f)\n'</span>, stopband_ripple_final, delta_s);
+
+<span class="comment">% Check if specifications are met</span>
+<span class="keyword">if</span> passband_ripple_final &lt;= delta_p
+    fprintf(<span class="string">'Passband ripple meets the specification.\n'</span>);
+<span class="keyword">else</span>
+    fprintf(<span class="string">'Passband ripple does NOT meet the specification.\n'</span>);
+<span class="keyword">end</span>
+
+<span class="keyword">if</span> stopband_ripple_final &lt;= delta_s
+    fprintf(<span class="string">'Stopband ripple meets the specification.\n'</span>);
+<span class="keyword">else</span>
+    fprintf(<span class="string">'Stopband ripple does NOT meet the specification.\n'</span>);
+<span class="keyword">end</span>
+
+
+
+<span class="comment">% Check for Linear Phase</span>
+<span class="comment">% Extract phase response</span>
+phase_response = unwrap(angle(H_final)); <span class="comment">% Unwrap the phase for linearity</span>
+linear_idx = (freq_final &gt;= 0.2 &amp; freq_final &lt;= 0.5); <span class="comment">% Frequency range to check linearity</span>
+
+<span class="comment">% Perform linear regression on the phase response</span>
+p = polyfit(freq_final(linear_idx), phase_response(linear_idx), 1); <span class="comment">% Linear fit</span>
+slope = p(1); <span class="comment">% The slope of the linear phase</span>
+
+<span class="comment">% Plot the phase response</span>
+figure;
+plot(freq_final, phase_response, <span class="string">'LineWidth'</span>, 1.5);
+hold <span class="string">on</span>;
+plot(freq_final(linear_idx), polyval(p, freq_final(linear_idx)), <span class="string">'--'</span>, <span class="string">'LineWidth'</span>, 1.5);
+title(<span class="string">'Phase Response of FIR Filter'</span>);
+xlabel(<span class="string">'Frequency (Hz)'</span>);
+ylabel(<span class="string">'Phase (radians)'</span>);
+legend(<span class="string">'Phase Response'</span>, <span class="string">'Linear Fit'</span>);
+grid <span class="string">on</span>;
+
+<span class="comment">% Display slope</span>
+fprintf(<span class="string">'Slope of Linear Phase: %.4f radians/Hz\n'</span>, slope);
+
+<span class="comment">% Check if the filter is linear phase</span>
+<span class="keyword">if</span> max(abs(polyval(p, freq_final(linear_idx)) - phase_response(linear_idx))) &lt; 1e-6
+    fprintf(<span class="string">'The FIR filter has a linear phase.\n'</span>);
+<span class="keyword">else</span>
+    fprintf(<span class="string">'The FIR filter does NOT have a linear phase.\n'</span>);
+<span class="keyword">end</span>
+
+<span class="comment">% Plot Impulse Response</span>
+<span class="comment">% Plot the impulse response to observe symmetry</span>
+figure;
+stem(b_final, <span class="string">'filled'</span>);
+title(<span class="string">'Final Impulse Response of FIR Filter'</span>);
+xlabel(<span class="string">'n (Sample Index)'</span>);
+ylabel(<span class="string">'h[n]'</span>);
+grid <span class="string">on</span>;
+
+<span class="comment">% Analyze Results</span>
+<span class="comment">% Print a summary of the design</span>
+fprintf(<span class="string">'\nFinal FIR Filter Design Summary:\n'</span>);
+fprintf(<span class="string">'---------------------------------\n'</span>);
+fprintf(<span class="string">'Filter Order: %d\n'</span>, n_final);
+fprintf(<span class="string">'Passband Ripple: %.4f (Expected: %.4f)\n'</span>, passband_ripple_final, delta_p);
+fprintf(<span class="string">'Stopband Ripple: %.4f (Expected: %.4f)\n'</span>, stopband_ripple_final, delta_s);
+
+<span class="keyword">if</span> passband_ripple_final &lt;= delta_p &amp;&amp; stopband_ripple_final &lt;= delta_s
+    fprintf(<span class="string">'The final filter design meets all specifications.\n'</span>);
+<span class="keyword">else</span>
+    fprintf(<span class="string">'The final filter design does NOT meet all specifications.\n'</span>);
+<span class="keyword">end</span>
+</pre>
+<pre class="codeoutput">Final Filter Order: 88
+Final Passband Ripple: 0.0497 (Expected: 0.0500)
+Final Stopband Ripple: 0.0075 (Expected: 0.0100)
+Passband ripple meets the specification.
+Stopband ripple meets the specification.
+Slope of Linear Phase: -138.2301 radians/Hz
+The FIR filter has a linear phase.
+
+Final FIR Filter Design Summary:
+---------------------------------
+Filter Order: 88
+Passband Ripple: 0.0497 (Expected: 0.0500)
+Stopband Ripple: 0.0075 (Expected: 0.0100)
+The final filter design meets all specifications.
+</pre>
+<img vspace="5" hspace="5" src="FILTER_DESIGN_OPTIMIZATION_11.png" alt=""> <img vspace="5" hspace="5" src="FILTER_DESIGN_OPTIMIZATION_12.png" alt=""> <img vspace="5" hspace="5" src="FILTER_DESIGN_OPTIMIZATION_13.png" alt=""> <img vspace="5" hspace="5" src="FILTER_DESIGN_OPTIMIZATION_14.png" alt=""> <img vspace="5" hspace="5" src="FILTER_DESIGN_OPTIMIZATION_15.png" alt=""> <p class="footer">
+<br>
+<a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2024b</a>
+<br>
+</p>
+</div>
+<!--
+##### SOURCE BEGIN #####
+%% FIR Filter Design via Optimization
+
+% Given Specifications
+omega_p = 0.68 * pi; % Passband edge (normalized frequency)
+omega_s = 0.72 * pi; % Stopband edge (normalized frequency)
+delta_p = 0.05; % Passband ripple
+delta_s = 0.01; % Stopband ripple
+fs = 2; % Sampling frequency (normalized to Nyquist)
+
+%% (a): Estimate Filter Order
+f_p = omega_p / (2 * pi) * fs; % Passband edge in Hz
+f_s = omega_s / (2 * pi) * fs; % Stopband edge in Hz
+
+% Use firpmord to determine filter order and specifications
+[n, fo, ao, w] = firpmord([f_p, f_s], [1, 0], [delta_p, delta_s], fs);
+
+
+% Display weights
+fprintf('Passband Weight: %.2f\n', w(1));
+fprintf('Stopband Weight: %.2f\n', w(2));
+% Display estimated filter order
+fprintf('Estimated Filter Order: %d\n', n);
+fprintf('Band Edges (Normalized): [%.4f, %.4f]\n', fo);
+fprintf('Desired Amplitudes: [%.4f, %.4f]\n', ao);
+fprintf('Weights: [%.4f, %.4f]\n', w);
+
+%  Compute Filter Coefficients
+b = firpm(n, fo, ao, w); % FIR filter coefficients
+
+% Display filter coefficients
+fprintf('Filter Coefficients:\n');
+disp(b);
+
+% Plot Impulse Response
+figure;
+stem(b, 'filled');
+title('Impulse Response of the FIR Filter');
+xlabel('n');
+ylabel('h[n]');
+grid on;
+
+% Plot Frequency Response
+[H, freq] = freqz(b, 1, 1024, fs);
+figure;
+plot(freq, abs(H), 'LineWidth', 1.5);
+title('Frequency Response of the FIR Filter');
+xlabel('Frequency (Hz)');
+ylabel('|H(f)|');
+grid on;
+%% (b): Plot Impulse Response
+% The filter coefficients calculated earlier represent the impulse response h[n].
+% Plotting the impulse response provides insights into the time-domain behavior of the filter.
+
+figure;
+stem(b, 'filled'); % Impulse response is the filter coefficients
+title('Impulse Response of the FIR Filter');
+xlabel('n (Sample Index)');
+ylabel('h[n] (Filter Coefficients)');
+grid on;
+%% Part (c): Frequency Response and Ripple Verification
+% Compute the frequency response of the FIR filter
+[H, freq] = freqz(b, 1, 1024, fs); % H(e^jω): Frequency response, freq: Frequency axis
+
+% Plot the magnitude response
+figure;
+plot(freq, abs(H), 'LineWidth', 1.5);
+title('Magnitude Response of the FIR Filter');
+xlabel('Frequency (Hz)');
+ylabel('|H(f)|');
+grid on;
+
+% Define passband and stopband regions
+passband_idx = (freq <= f_p); % Logical indexing for passband region
+stopband_idx = (freq >= f_s); % Logical indexing for stopband region
+
+% Compute ripples
+passband_ripple = max(abs(H(passband_idx))) - min(abs(H(passband_idx))); % Ripple in passband
+stopband_ripple = max(abs(H(stopband_idx))); % Ripple in stopband
+
+% Display ripple specs
+fprintf('Passband Ripple (Max-Min): %.4f (Expected: %.4f)\n', passband_ripple, delta_p);
+fprintf('Stopband Ripple (Max): %.4f (Expected: %.4f)\n', stopband_ripple, delta_s);
+
+% Check if specifications are met
+if passband_ripple <= delta_p
+    fprintf('Passband ripple meets the specification.\n');
+else
+    fprintf('Passband ripple does NOT meet the specification.\n');
+end
+
+if stopband_ripple <= delta_s
+    fprintf('Stopband ripple meets the specification.\n');
+else
+    fprintf('Stopband ripple does NOT meet the specification.\n');
+end
+
+% Zoomed plots for better verification
+% Zoomed Passband Ripple
+figure;
+plot(freq(passband_idx), abs(H(passband_idx)), 'LineWidth', 1.5);
+title('Zoomed Passband Ripple');
+xlabel('Frequency (Hz)');
+ylabel('|H(f)|');
+grid on;
+
+% Zoomed Stopband Ripple
+figure;
+plot(freq(stopband_idx), abs(H(stopband_idx)), 'LineWidth', 1.5);
+title('Zoomed Stopband Ripple');
+xlabel('Frequency (Hz)');
+ylabel('|H(f)|');
+grid on;
+
+
+%% Part (d): Redesigning the FIR Filter (iterative-1)
+
+% Increment the filter order
+n_new = n + 1; % Increase the filter order by 1
+fprintf('Increased Filter Order: %d\n', n_new);
+
+% Redesign the filter with the new order
+b_new = firpm(n_new, fo, ao, w); % Recompute filter coefficients
+
+% Frequency Response of Redesigned Filter
+% Compute the frequency response of the redesigned FIR filter.
+
+[H_new, freq_new] = freqz(b_new, 1, 1024, fs); % Frequency response
+figure;
+plot(freq_new, abs(H_new), 'LineWidth', 1.5);
+title('Magnitude Response of Redesigned FIR Filter');
+xlabel('Frequency (Hz)');
+ylabel('|H(f)|');
+grid on;
+
+% Verifying Ripple Specifications
+% The redesigned filter's passband and stopband ripples are calculated and compared
+% with the given specifications.
+
+% Passband and stopband indices
+passband_idx_new = (freq_new <= f_p); % Passband region
+stopband_idx_new = (freq_new >= f_s); % Stopband region
+
+% Calculate passband ripple
+passband_ripple_new = max(abs(H_new(passband_idx_new))) - min(abs(H_new(passband_idx_new)));
+
+% Calculate stopband ripple
+stopband_ripple_new = max(abs(H_new(stopband_idx_new)));
+
+% Display the ripple values
+fprintf('New Passband Ripple: %.4f (Expected: %.4f)\n', passband_ripple_new, delta_p);
+fprintf('New Stopband Ripple: %.4f (Expected: %.4f)\n', stopband_ripple_new, delta_s);
+
+% Check if the ripple specifications are satisfied
+if passband_ripple_new <= delta_p
+    fprintf('Passband ripple meets the specification.\n');
+else
+    fprintf('Passband ripple does NOT meet the specification.\n');
+end
+
+if stopband_ripple_new <= delta_s
+    fprintf('Stopband ripple meets the specification.\n');
+else
+    fprintf('Stopband ripple does NOT meet the specification.\n');
+end
+
+% Impulse Response of Redesigned Filter
+% The impulse response of the redesigned filter (i.e., its filter coefficients)
+% is visualized to observe the time-domain behavior of the filter.
+
+figure;
+stem(b_new, 'filled');
+title('Impulse Response of Redesigned FIR Filter');
+xlabel('n (Sample Index)');
+ylabel('h[n]');
+grid on;
+%% Further Increasing Filter Order
+% Since the redesigned filter still did not meet the specifications, we further
+% increase the filter order by 2.
+% Increase the weight on the passband
+w_p_adjusted = 1.5 * (1 / delta_p); % Increase passband weight by 50%
+w_s = 1 / delta_s; % Keep stopband weight the same
+w_adjusted = [w_p_adjusted, w_s]; % New weights
+
+n_newer = n_new + 14; % Increase the filter order by 2
+fprintf('Further Increased Filter Order: %d\n', n_newer);
+
+% Redesign the filter with the new order
+b_newer = firpm(n_newer, fo, ao, w_adjusted); % Recompute filter coefficients
+
+% Compute the frequency response of the new filter
+[H_newer, freq_newer] = freqz(b_newer, 1, 1024, fs);
+
+%Frequency Response of the Further Redesigned Filter
+% Plot the magnitude response to visualize improvements.
+figure;
+plot(freq_newer, abs(H_newer), 'LineWidth', 1.5);
+title('Magnitude Response of Further Redesigned FIR Filter');
+xlabel('Frequency (Hz)');
+ylabel('|H(f)|');
+grid on;
+
+% Verifying Ripple Specifications
+% Calculate passband and stopband ripples for the further redesigned filter.
+
+% Passband and stopband indices
+passband_idx_newer = (freq_newer <= f_p); % Logical indices for passband
+stopband_idx_newer = (freq_newer >= f_s); % Logical indices for stopband
+
+% Compute ripples
+passband_ripple_newer = max(abs(H_newer(passband_idx_newer))) - min(abs(H_newer(passband_idx_newer)));
+stopband_ripple_newer = max(abs(H_newer(stopband_idx_newer)));
+
+% Display the ripple values
+fprintf('New Passband Ripple: %.4f (Expected: %.4f)\n', passband_ripple_newer, delta_p);
+fprintf('New Stopband Ripple: %.4f (Expected: %.4f)\n', stopband_ripple_newer, delta_s);
+
+% Check if the ripple specifications are met
+if passband_ripple_newer <= delta_p
+    fprintf('Passband ripple meets the specification after further redesign.\n');
+else
+    fprintf('Passband ripple does NOT meet the specification after further redesign.\n');
+end
+
+if stopband_ripple_newer <= delta_s
+    fprintf('Stopband ripple meets the specification after further redesign.\n');
+else
+    fprintf('Stopband ripple does NOT meet the specification after further redesign.\n');
+end
+
+% Impulse Response of Further Redesigned Filter
+% Plot the impulse response to observe the changes in the time domain.
+figure;
+stem(b_newer, 'filled');
+title('Impulse Response of Further Redesigned FIR Filter');
+xlabel('n (Sample Index)');
+ylabel('h[n]');
+grid on;
+%% (e) Final FIR Filter Design 
+
+% Final Filter Design
+n_final = n_newer; % Use the last adjusted filter order
+fprintf('Final Filter Order: %d\n', n_final);
+
+% Redesign the FIR filter
+b_final = firpm(n_final, fo, ao, w_adjusted); % Filter coefficients
+
+% Compute the frequency response
+[H_final, freq_final] = freqz(b_final, 1, 1024, fs);
+
+% Plot Magnitude Response
+figure;
+plot(freq_final, abs(H_final), 'LineWidth', 1.5);
+title('Final Magnitude Response of FIR Filter');
+xlabel('Frequency (Hz)');
+ylabel('|H(f)|');
+grid on;
+
+% Highlight passband and stopband limits
+hold on;
+yline(1 + delta_p, 'REPLACE_WITH_DASH_DASHr', 'Passband Upper Limit'); % Passband upper tolerance
+yline(1 - delta_p, 'REPLACE_WITH_DASH_DASHr', 'Passband Lower Limit'); % Passband lower tolerance
+yline(delta_s, 'REPLACE_WITH_DASH_DASHb', 'Stopband Upper Limit'); % Stopband tolerance
+hold off;
+
+% Zoomed-In Passband Response
+figure;
+plot(freq_final, abs(H_final), 'LineWidth', 1.5);
+xlim([0, f_p + 0.1 * (f_s - f_p)]); % Adjust range for zoom
+ylim([1 - delta_p - 0.01, 1 + delta_p + 0.01]); % Adjust vertical limits for passband ripple
+title('Zoomed-In Passband Response');
+xlabel('Frequency (Hz)');
+ylabel('|H(f)|');
+grid on;
+hold on;
+yline(1 + delta_p, 'REPLACE_WITH_DASH_DASHr', 'Passband Upper Limit'); % Passband upper tolerance
+yline(1 - delta_p, 'REPLACE_WITH_DASH_DASHr', 'Passband Lower Limit'); % Passband lower tolerance
+hold off;
+
+% Zoomed-In Stopband Response
+figure;
+plot(freq_final, abs(H_final), 'LineWidth', 1.5);
+xlim([f_s - 0.1 * (f_s - f_p), fs/2]); % Adjust range for zoom
+ylim([0, delta_s + 0.01]); % Adjust vertical limits for stopband ripple
+title('Zoomed-In Stopband Response');
+xlabel('Frequency (Hz)');
+ylabel('|H(f)|');
+grid on;
+hold on;
+yline(delta_s, 'REPLACE_WITH_DASH_DASHb', 'Stopband Tolerance'); % Stopband tolerance
+hold off;
+
+% Ripple Verification
+% Passband and stopband indices
+passband_idx_final = (freq_final <= f_p); % Passband region
+stopband_idx_final = (freq_final >= f_s); % Stopband region
+
+% Compute ripples
+passband_ripple_final = max(abs(H_final(passband_idx_final))) - min(abs(H_final(passband_idx_final)));
+stopband_ripple_final = max(abs(H_final(stopband_idx_final)));
+
+% Display final ripple values
+fprintf('Final Passband Ripple: %.4f (Expected: %.4f)\n', passband_ripple_final, delta_p);
+fprintf('Final Stopband Ripple: %.4f (Expected: %.4f)\n', stopband_ripple_final, delta_s);
+
+% Check if specifications are met
+if passband_ripple_final <= delta_p
+    fprintf('Passband ripple meets the specification.\n');
+else
+    fprintf('Passband ripple does NOT meet the specification.\n');
+end
+
+if stopband_ripple_final <= delta_s
+    fprintf('Stopband ripple meets the specification.\n');
+else
+    fprintf('Stopband ripple does NOT meet the specification.\n');
+end
+
+
+
+% Check for Linear Phase
+% Extract phase response
+phase_response = unwrap(angle(H_final)); % Unwrap the phase for linearity
+linear_idx = (freq_final >= 0.2 & freq_final <= 0.5); % Frequency range to check linearity
+
+% Perform linear regression on the phase response
+p = polyfit(freq_final(linear_idx), phase_response(linear_idx), 1); % Linear fit
+slope = p(1); % The slope of the linear phase
+
+% Plot the phase response
+figure;
+plot(freq_final, phase_response, 'LineWidth', 1.5);
+hold on;
+plot(freq_final(linear_idx), polyval(p, freq_final(linear_idx)), 'REPLACE_WITH_DASH_DASH', 'LineWidth', 1.5);
+title('Phase Response of FIR Filter');
+xlabel('Frequency (Hz)');
+ylabel('Phase (radians)');
+legend('Phase Response', 'Linear Fit');
+grid on;
+
+% Display slope
+fprintf('Slope of Linear Phase: %.4f radians/Hz\n', slope);
+
+% Check if the filter is linear phase
+if max(abs(polyval(p, freq_final(linear_idx)) - phase_response(linear_idx))) < 1e-6
+    fprintf('The FIR filter has a linear phase.\n');
+else
+    fprintf('The FIR filter does NOT have a linear phase.\n');
+end
+
+% Plot Impulse Response
+% Plot the impulse response to observe symmetry
+figure;
+stem(b_final, 'filled');
+title('Final Impulse Response of FIR Filter');
+xlabel('n (Sample Index)');
+ylabel('h[n]');
+grid on;
+
+% Analyze Results
+% Print a summary of the design
+fprintf('\nFinal FIR Filter Design Summary:\n');
+fprintf('REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-\n');
+fprintf('Filter Order: %d\n', n_final);
+fprintf('Passband Ripple: %.4f (Expected: %.4f)\n', passband_ripple_final, delta_p);
+fprintf('Stopband Ripple: %.4f (Expected: %.4f)\n', stopband_ripple_final, delta_s);
+
+if passband_ripple_final <= delta_p && stopband_ripple_final <= delta_s
+    fprintf('The final filter design meets all specifications.\n');
+else
+    fprintf('The final filter design does NOT meet all specifications.\n');
+end
+
+##### SOURCE END #####
+-->
+</body>
+</html>
