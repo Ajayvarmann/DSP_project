@@ -12,13 +12,13 @@
 
 2. [FIR Filter Design GUI](#FIR-Filter-design)
 
-    [Designing two Low pass Filter](#Designing-Two-Lowpass-Filter)
+    [Move to Designing two Low pass Filter](#Designing-Two-Lowpass-Filter)
    
-    [Transition Zone of the LPF](#Transition-Zone-of-the-LPF)
+    [Move to Transition Zone of the LPF](#Transition-Zone-of-the-LPF)
 
-    [Design FIR Filter to Meet Given Specifications](#Design-FIR-Filter-to-Meet-Given-Specifications)
+    [Move to Design FIR Filter to Meet Given Specifications](#Design-FIR-Filter-to-Meet-Given-Specifications)
    
-    [FIR Filter Design via Optimization](#FIR-Filter-design-via-Optimization)
+    [Move to FIR Filter Design via Optimization](#FIR-Filter-design-via-Optimization)
      
   
   
