@@ -91,14 +91,14 @@ Hamming Window: Smooth tapering the narrower transition zone. Compared to the re
 
  <img src="https://github.com/Ajayvarmann/ECE-6530_team-7_Final-project/blob/main/LabS6_Exercise_2/exercise_1.jpg?raw=true" width="200">
 
- ## Transition Zone of Low pass filter
+ ## Transition Zone of the LPF
  Transition width (Δω=ωs−ωp​):
 The transition zone of a lowpass FIR filter is the frequency range between the passband edge (ωp) and the stopband edge (ωs), where the filter transitions from passing to attenuating frequencies. Its width (Δω=ωs−ωp) reflects the sharpness of the filter, with narrower zones indicating closer approximation to an ideal filter. Achieving a smaller transition zone requires higher filter orders or advanced windows like the Hamming window, which balance smooth attenuation and minimal ripples.
 Observations:
 Increasing M reduces Δω
 Relation: Δω=C/L​, where L=M+1(M: filter order)
 The GUI for filter design is included in the file inside
-## Design FIR Filter to Meet Given Specifications (Hamming)
+## Design FIR Filter to Meet Given Specifications 
 Filter design for lowpass filters involves five parameters: two band edges, ripple heights in two bands, and
 the filter order. There is a sixth factor, which is the type of filter such as a Hamming windowed FIR filter. A
 typical design problem would be stated as follows: given the band edges and ripple heights, determine the
