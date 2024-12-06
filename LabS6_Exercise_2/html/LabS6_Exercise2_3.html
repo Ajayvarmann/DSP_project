@@ -1,0 +1,305 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      -->
+<title>LabS6_Exercise2_3</title>
+<meta name="generator" content="MATLAB 23.2">
+<link rel="schema.DC" href="http://purl.org/dc/elements/1.1/">
+<meta name="DC.date" content="2024-12-04">
+<meta name="DC.source" content="LabS6_Exercise2_3.m">
+<style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; }
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+span.typesection { color:#A0522D }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style>
+</head>
+<body>
+<div class="content">
+<h2>Contents</h2>
+<div>
+<ul>
+<li>
+<a href="#2">(a) Sketch the Ideal Filter</a>
+</li>
+<li>
+<a href="#3">(b) Predict Filter Length (M) using the Given Formula</a>
+</li>
+<li>
+<a href="#4">(c) Design the Hamming-Windowed FIR Filter</a>
+</li>
+</ul>
+</div>
+<pre class="codeinput">
+<span class="comment">% Parameters</span>
+fs = 10000; <span class="comment">% Sampling Frequency in Hz</span>
+omega_p = 0.68 * pi; <span class="comment">% Passband edge (rad/sample)</span>
+omega_s = 0.72 * pi; <span class="comment">% Stopband edge (rad/sample)</span>
+delta_p = 0.01; <span class="comment">% Passband ripple tolerance</span>
+delta_s = 0.01; <span class="comment">% Stopband ripple tolerance</span>
+</pre>
+<h2 id="2">(a) Sketch the Ideal Filter</h2>
+<pre class="codeinput">f_p = omega_p * fs / (2 * pi); <span class="comment">% Passband edge in Hz</span>
+f_s = omega_s * fs / (2 * pi); <span class="comment">% Stopband edge in Hz</span>
+
+<span class="comment">% Frequency range and ideal response</span>
+frequencies = linspace(0, fs/2, 1000); <span class="comment">% Frequency range (0 to Nyquist)</span>
+response = zeros(size(frequencies)); <span class="comment">% Initialize response</span>
+response(frequencies &lt;= f_p) = 1; <span class="comment">% Passband</span>
+response(frequencies &gt;= f_s) = 0; <span class="comment">% Stopband</span>
+
+<span class="comment">% Plot ideal lowpass filter template</span>
+figure;
+plot(frequencies, response, <span class="string">'LineWidth'</span>, 1.5);
+hold <span class="string">on</span>;
+xline(f_p, <span class="string">'--r'</span>, <span class="string">'Passband Edge'</span>);
+xline(f_s, <span class="string">'--b'</span>, <span class="string">'Stopband Edge'</span>);
+title(<span class="string">'Ideal Lowpass Filter Response'</span>);
+xlabel(<span class="string">'Frequency (Hz)'</span>);
+ylabel(<span class="string">'Magnitude'</span>);
+grid <span class="string">on</span>;
+legend(<span class="string">'Ideal Response'</span>, <span class="string">'Passband Edge'</span>, <span class="string">'Stopband Edge'</span>);
+hold <span class="string">off</span>;
+</pre>
+<img vspace="5" hspace="5" src="LabS6_Exercise2_3_01.png" alt=""> <h2 id="3">(b) Predict Filter Length (M) using the Given Formula</h2>
+<p>Transition band width</p>
+<pre class="codeinput">delta_omega = omega_s - omega_p; <span class="comment">% (rad/sample)</span>
+
+<span class="comment">% Compute M using the formula</span>
+M = ceil((-20 * log10(delta_s)) / (6.6 * delta_omega)); <span class="comment">% Filter order</span>
+L = M + 1; <span class="comment">% Filter length</span>
+fprintf(<span class="string">'Predicted Filter Order (M): %d\n'</span>, M);
+fprintf(<span class="string">'Predicted Filter Length (L): %d\n'</span>, L);
+</pre>
+<pre class="codeoutput">Predicted Filter Order (M): 49
+Predicted Filter Length (L): 50
+</pre>
+<h2 id="4">(c) Design the Hamming-Windowed FIR Filter</h2>
+<p>Compute cutoff frequency</p>
+<pre class="codeinput">omega_c = (omega_p + omega_s) / 2; <span class="comment">% Midpoint cutoff frequency in rad/sample</span>
+fprintf(<span class="string">'Chosen Cutoff Frequency (ω_c): %.4f radians/sample\n'</span>, omega_c);
+
+<span class="comment">% Create ideal impulse response (sinc function)</span>
+n = 0:M; <span class="comment">% Sample indices</span>
+ideal_h = sin(omega_c * (n - M/2)) ./ (pi * (n - M/2)); <span class="comment">% Sinc function</span>
+
+<span class="comment">% Fix division by zero at the center</span>
+center_index = floor(M/2) + 1; <span class="comment">% Calculate the center index as an integer</span>
+ideal_h(center_index) = omega_c / pi; <span class="comment">% Assign the correct value at the center</span>
+
+<span class="comment">% Apply Hamming window</span>
+hamming_window = 0.54 - 0.46 * cos(2 * pi * n / M); <span class="comment">% Hamming formula</span>
+h_hamming = ideal_h .* hamming_window;
+
+<span class="comment">% Compute Frequency Response</span>
+[H_hamming, omega_hamming] = freqz(h_hamming, 1, 1024, <span class="string">'whole'</span>); <span class="comment">% Frequency response [0, π]</span>
+
+<span class="comment">% Plot the frequency response</span>
+figure;
+plot(omega_hamming, abs(H_hamming), <span class="string">'b'</span>, <span class="string">'LineWidth'</span>, 1.5); <span class="comment">% Plot frequency response</span>
+hold <span class="string">on</span>;
+
+<span class="comment">% Mark the cutoff frequency (omega_c) as a vertical line</span>
+xline(omega_c, <span class="string">'--k'</span>, <span class="string">'Cutoff Frequency'</span>, <span class="string">'LabelVerticalAlignment'</span>, <span class="string">'bottom'</span>, <span class="keyword">...</span>
+    <span class="string">'LabelHorizontalAlignment'</span>, <span class="string">'center'</span>);
+
+<span class="comment">% Adjust labels, title, and grid</span>
+title(<span class="string">'Hamming-Windowed FIR Filter Frequency Response'</span>);
+xlabel(<span class="string">'Frequency (radians)'</span>);
+ylabel(<span class="string">'Magnitude'</span>);
+grid <span class="string">on</span>;
+legend(<span class="string">'Frequency Response'</span>, <span class="string">'Cutoff Frequency'</span>);
+hold <span class="string">off</span>;
+
+<span class="comment">% Analyze ripple and attenuation</span>
+<span class="comment">% Passband ripple (deviation from unity gain in passband)</span>
+passband_indices = find(omega_hamming &lt;= omega_p);
+passband_ripple = max(abs(abs(H_hamming(passband_indices)) - 1));
+
+<span class="comment">% Stopband attenuation (maximum gain in stopband)</span>
+stopband_indices = find(omega_hamming &gt;= omega_s);
+stopband_attenuation = max(abs(H_hamming(stopband_indices)));
+
+<span class="comment">% Display results</span>
+fprintf(<span class="string">'Passband Ripple: %.4f (Expected &lt;= %.4f)\n'</span>, passband_ripple, delta_p);
+fprintf(<span class="string">'Stopband Attenuation: %.4f (Expected &lt;= %.4f)\n'</span>, stopband_attenuation, delta_s);
+
+<span class="keyword">if</span> passband_ripple &lt;= delta_p &amp;&amp; stopband_attenuation &lt;= delta_s
+    fprintf(<span class="string">'The filter meets the specifications.\n'</span>);
+<span class="keyword">else</span>
+    fprintf(<span class="string">'The filter does NOT meet the specifications.\n'</span>);
+<span class="keyword">end</span>
+</pre>
+<pre class="codeoutput">Chosen Cutoff Frequency (ω_c): 2.1991 radians/sample
+Passband Ripple: 0.1753 (Expected &lt;= 0.0100)
+Stopband Attenuation: 1.1326 (Expected &lt;= 0.0100)
+The filter does NOT meet the specifications.
+</pre>
+<img vspace="5" hspace="5" src="LabS6_Exercise2_3_02.png" alt=""> <p class="footer">
+<br>
+<a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2023b</a>
+<br>
+</p>
+</div>
+<!--
+##### SOURCE BEGIN #####
+% Parameters
+fs = 10000; % Sampling Frequency in Hz
+omega_p = 0.68 * pi; % Passband edge (rad/sample)
+omega_s = 0.72 * pi; % Stopband edge (rad/sample)
+delta_p = 0.01; % Passband ripple tolerance
+delta_s = 0.01; % Stopband ripple tolerance
+
+%% (a) Sketch the Ideal Filter
+f_p = omega_p * fs / (2 * pi); % Passband edge in Hz
+f_s = omega_s * fs / (2 * pi); % Stopband edge in Hz
+
+% Frequency range and ideal response
+frequencies = linspace(0, fs/2, 1000); % Frequency range (0 to Nyquist)
+response = zeros(size(frequencies)); % Initialize response
+response(frequencies <= f_p) = 1; % Passband
+response(frequencies >= f_s) = 0; % Stopband
+
+% Plot ideal lowpass filter template
+figure;
+plot(frequencies, response, 'LineWidth', 1.5);
+hold on;
+xline(f_p, 'REPLACE_WITH_DASH_DASHr', 'Passband Edge');
+xline(f_s, 'REPLACE_WITH_DASH_DASHb', 'Stopband Edge');
+title('Ideal Lowpass Filter Response');
+xlabel('Frequency (Hz)');
+ylabel('Magnitude');
+grid on;
+legend('Ideal Response', 'Passband Edge', 'Stopband Edge');
+hold off;
+
+%% (b) Predict Filter Length (M) using the Given Formula
+% Transition band width
+delta_omega = omega_s - omega_p; % (rad/sample)
+
+% Compute M using the formula
+M = ceil((-20 * log10(delta_s)) / (6.6 * delta_omega)); % Filter order
+L = M + 1; % Filter length
+fprintf('Predicted Filter Order (M): %d\n', M);
+fprintf('Predicted Filter Length (L): %d\n', L);
+
+%% (c) Design the Hamming-Windowed FIR Filter
+% Compute cutoff frequency
+omega_c = (omega_p + omega_s) / 2; % Midpoint cutoff frequency in rad/sample
+fprintf('Chosen Cutoff Frequency (ω_c): %.4f radians/sample\n', omega_c);
+
+% Create ideal impulse response (sinc function)
+n = 0:M; % Sample indices
+ideal_h = sin(omega_c * (n - M/2)) ./ (pi * (n - M/2)); % Sinc function
+
+% Fix division by zero at the center
+center_index = floor(M/2) + 1; % Calculate the center index as an integer
+ideal_h(center_index) = omega_c / pi; % Assign the correct value at the center
+
+% Apply Hamming window
+hamming_window = 0.54 - 0.46 * cos(2 * pi * n / M); % Hamming formula
+h_hamming = ideal_h .* hamming_window;
+
+% Compute Frequency Response
+[H_hamming, omega_hamming] = freqz(h_hamming, 1, 1024, 'whole'); % Frequency response [0, π]
+
+% Plot the frequency response
+figure;
+plot(omega_hamming, abs(H_hamming), 'b', 'LineWidth', 1.5); % Plot frequency response
+hold on;
+
+% Mark the cutoff frequency (omega_c) as a vertical line
+xline(omega_c, 'REPLACE_WITH_DASH_DASHk', 'Cutoff Frequency', 'LabelVerticalAlignment', 'bottom', ...
+    'LabelHorizontalAlignment', 'center');
+
+% Adjust labels, title, and grid
+title('Hamming-Windowed FIR Filter Frequency Response');
+xlabel('Frequency (radians)');
+ylabel('Magnitude');
+grid on;
+legend('Frequency Response', 'Cutoff Frequency');
+hold off;
+
+% Analyze ripple and attenuation
+% Passband ripple (deviation from unity gain in passband)
+passband_indices = find(omega_hamming <= omega_p);
+passband_ripple = max(abs(abs(H_hamming(passband_indices)) - 1));
+
+% Stopband attenuation (maximum gain in stopband)
+stopband_indices = find(omega_hamming >= omega_s);
+stopband_attenuation = max(abs(H_hamming(stopband_indices)));
+
+% Display results
+fprintf('Passband Ripple: %.4f (Expected <= %.4f)\n', passband_ripple, delta_p);
+fprintf('Stopband Attenuation: %.4f (Expected <= %.4f)\n', stopband_attenuation, delta_s);
+
+if passband_ripple <= delta_p && stopband_attenuation <= delta_s
+    fprintf('The filter meets the specifications.\n');
+else
+    fprintf('The filter does NOT meet the specifications.\n');
+end
+
+##### SOURCE END #####
+-->
+</body>
+</html>
