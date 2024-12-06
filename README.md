@@ -76,7 +76,7 @@ Key Objectives is implement the dtmfscore function: This function will filter a 
 ### Telephone Numbers
 <img src="https://github.com/Ajayvarmann/DSP_project/blob/main/Images/LabP13_Exercise4_4_01.png?raw=true" width="400">
 
-## Designing two Low pass Filter
+## Designing Two Lowpass Filter
 Filter Design Specifications
 Cutoff Frequency (ωc\omega): 0.4π=2⋅2000/10000 Hz
 Sampling Frequency (fs​): 10,000 Hz.
